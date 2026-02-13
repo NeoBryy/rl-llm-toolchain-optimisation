@@ -1,0 +1,102 @@
+[project]
+name = "rl-meter-analyst"
+version = "0.1.0"
+description = "RL-trained LLM agent for utilities meter data analysis"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+dependencies = [
+    # LLM APIs
+    "openai>=1.0.0",
+    
+    # ML/RL Stack (CPU-only PyTorch, see README for CUDA instructions)
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "trl>=0.7.0",
+    
+    # Data Processing
+    "duckdb>=0.9.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    
+    # Visualization
+    "matplotlib>=3.7.0",
+    
+    # UI
+    "streamlit>=1.28.0",
+    
+    # Utilities
+    "python-dotenv>=1.0.0",
+    "tqdm>=4.65.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "mypy>=1.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+# Exclude directories
+exclude = [
+    ".venv",
+    ".uv",
+    "__pycache__",
+    "*.pyc",
+    ".git",
+    "data",
+    "logs",
+]
+
+[tool.ruff.lint]
+# Enable specific rule sets
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade (modern Python idioms)
+]
+
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py files
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+exclude = [
+    "data",
+    "logs",
+    ".venv",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
