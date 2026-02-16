@@ -1,0 +1,76 @@
+[
+  {
+    "query": "Plot the daily consumption for customer 5 in January 2026",
+    "category": "plot",
+    "tool": "plot_generator",
+    "args": {
+      "data": [],  # Filled dynamically in generation script or mocked
+      "plot_type": "line",
+      "x": "timestamp",
+      "y": "consumption_kwh",
+      "title": "Customer 5 Daily Consumption"
+    },
+    "expected_value": true,
+    "tolerance_type": "plot_exists",
+    "tolerance": 0.0
+  },
+  {
+    "query": "Generate a bar chart of total consumption by customer segment",
+    "category": "plot",
+    "tool": "plot_generator",
+    "args": {
+      "data": [], 
+      "plot_type": "bar",
+      "x": "segment",
+      "y": "total_consumption",
+      "title": "Consumption by Segment"
+    },
+    "expected_value": true,
+    "tolerance_type": "plot_exists",
+    "tolerance": 0.0
+  },
+  {
+    "query": "Visualize the consumption trend for customer 10 in February 2026",
+    "category": "plot",
+    "tool": "plot_generator",
+    "args": {
+      "data": [],
+      "plot_type": "line",
+      "x": "timestamp",
+      "y": "consumption_kwh",
+      "title": "Customer 10 Trend"
+    },
+    "expected_value": true,
+    "tolerance_type": "plot_exists",
+    "tolerance": 0.0
+  },
+  {
+    "query": "Create a scatter plot of peak vs off-peak usage for all customers",
+    "category": "plot",
+    "tool": "plot_generator",
+    "args": {
+      "data": [],
+      "plot_type": "scatter",
+      "x": "peak_kwh",
+      "y": "off_peak_kwh",
+      "title": "Peak vs Off-Peak Usage"
+    },
+    "expected_value": true,
+    "tolerance_type": "plot_exists",
+    "tolerance": 0.0
+  },
+  {
+    "query": "Show a histogram of load factors distributions",
+    "category": "plot",
+    "tool": "plot_generator",
+    "args": {
+      "data": [],
+      "plot_type": "histogram",
+      "x": "load_factor",
+      "title": "Load Factor Distribution"
+    },
+    "expected_value": true,
+    "tolerance_type": "plot_exists",
+    "tolerance": 0.0
+  }
+]

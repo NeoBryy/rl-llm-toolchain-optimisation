@@ -200,7 +200,11 @@ def get_tools_description() -> str:
         for param_name, param_spec in tool.parameters.items():
             required_str = "required" if param_spec["required"] else "optional"
             type_str = param_spec["type"].__name__
-            default_str = f" (default: {param_spec.get('default')})" if not param_spec["required"] else ""
+            default_str = (
+                f" (default: {param_spec.get('default')})"
+                if not param_spec["required"]
+                else ""
+            )
             desc += f"    - {param_name}: {type_str}, {required_str}{default_str} - {param_spec['description']}\n"
 
         descriptions.append(desc)
@@ -242,7 +246,9 @@ def _coerce_argument(value: Any, target_type: type) -> Any:
             # Unknown type, return as-is
             return value
     except (ValueError, TypeError) as e:
-        raise ValueError(f"Cannot coerce '{value}' to type {target_type.__name__}: {e}") from e
+        raise ValueError(
+            f"Cannot coerce '{value}' to type {target_type.__name__}: {e}"
+        ) from e
 
 
 def execute_tool(tool_name: str, arguments: dict[str, Any]) -> Any:
@@ -280,7 +286,9 @@ def execute_tool(tool_name: str, arguments: dict[str, Any]) -> Any:
 
     for param_name, param_spec in tool.parameters.items():
         if param_spec["required"] and param_name not in arguments:
-            raise ValueError(f"Missing required parameter '{param_name}' for tool '{tool_name}'")
+            raise ValueError(
+                f"Missing required parameter '{param_name}' for tool '{tool_name}'"
+            )
 
         if param_name in arguments:
             # Coerce the argument

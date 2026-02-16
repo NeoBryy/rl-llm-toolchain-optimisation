@@ -39,7 +39,15 @@ def sql_executor(query: str, row_limit: int = 100) -> dict[str, Any]:
         ['customer_id', 'segment', 'meter_type', 'join_date']
     """
     # Validate query safety
-    forbidden_keywords = ["INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER", "TRUNCATE"]
+    forbidden_keywords = [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "DROP",
+        "CREATE",
+        "ALTER",
+        "TRUNCATE",
+    ]
     query_upper = query.upper()
 
     for keyword in forbidden_keywords:
@@ -67,7 +75,11 @@ def sql_executor(query: str, row_limit: int = 100) -> dict[str, Any]:
             "row_count": len(result_df),
         }
 
-        logger.info("Query returned %d rows, %d columns", result["row_count"], len(result["columns"]))
+        logger.info(
+            "Query returned %d rows, %d columns",
+            result["row_count"],
+            len(result["columns"]),
+        )
 
         return result
 
@@ -125,6 +137,7 @@ def pandas_aggregator(
 
     # Convert to DataFrame
     import pandas as pd
+
     df = pd.DataFrame(result["rows"], columns=result["columns"])
 
     # Validate column exists
@@ -162,7 +175,9 @@ def pandas_aggregator(
         return {
             "operation": operation,
             "column": column,
-            "result": float(agg_result) if hasattr(agg_result, '__float__') else agg_result,
+            "result": float(agg_result)
+            if hasattr(agg_result, "__float__")
+            else agg_result,
         }
 
 
@@ -199,7 +214,9 @@ def _is_peak_hour(hour: int, peak_ranges: list[tuple[int, int]]) -> bool:
     return any(start <= hour < end for start, end in peak_ranges)
 
 
-def _calculate_standing_charge(start_date: str, end_date: str, daily_rate: float) -> float:
+def _calculate_standing_charge(
+    start_date: str, end_date: str, daily_rate: float
+) -> float:
     """
     Calculate standing charge for date range.
 
@@ -240,7 +257,12 @@ def tariff_calculator(
         ValueError: If customer not found or dates invalid
         RuntimeError: If query execution fails
     """
-    logger.info("Calculating tariff for customer %d from %s to %s", customer_id, start_date, end_date)
+    logger.info(
+        "Calculating tariff for customer %d from %s to %s",
+        customer_id,
+        start_date,
+        end_date,
+    )
 
     # Fetch customer segment
     customer_query = f"SELECT segment FROM customers WHERE customer_id = {customer_id}"
@@ -276,7 +298,10 @@ def tariff_calculator(
 
     # Calculate peak and off-peak consumption
     import pandas as pd
-    readings_df = pd.DataFrame(readings_result["rows"], columns=readings_result["columns"])
+
+    readings_df = pd.DataFrame(
+        readings_result["rows"], columns=readings_result["columns"]
+    )
 
     peak_kwh = 0.0
     off_peak_kwh = 0.0
@@ -348,7 +373,12 @@ def calculate_load_factor(
     """
     from datetime import datetime
 
-    logger.info("Calculating load factor for customer %d from %s to %s", customer_id, start_date, end_date)
+    logger.info(
+        "Calculating load factor for customer %d from %s to %s",
+        customer_id,
+        start_date,
+        end_date,
+    )
 
     # Fetch readings for date range
     readings_query = f"""
@@ -365,7 +395,10 @@ def calculate_load_factor(
 
     # Calculate metrics
     import pandas as pd
-    readings_df = pd.DataFrame(readings_result["rows"], columns=readings_result["columns"])
+
+    readings_df = pd.DataFrame(
+        readings_result["rows"], columns=readings_result["columns"]
+    )
 
     consumptions = readings_df["consumption_kwh"].values
     average_load = float(consumptions.mean())
@@ -442,6 +475,7 @@ def plot_generator(
 
     # Convert to DataFrame
     import pandas as pd
+
     df = pd.DataFrame(result["rows"], columns=result["columns"])
 
     # Validate columns
@@ -459,7 +493,7 @@ def plot_generator(
         plt.figure(figsize=(10, 6))
 
         if plot_type == "line":
-            plt.plot(df[x_column], df[y_column], marker='o')
+            plt.plot(df[x_column], df[y_column], marker="o")
         elif plot_type == "bar":
             plt.bar(df[x_column], df[y_column])
         elif plot_type == "scatter":
@@ -468,7 +502,7 @@ def plot_generator(
         plt.xlabel(x_column)
         plt.ylabel(y_column)
         plt.title(title if title else f"{y_column} vs {x_column}")
-        plt.xticks(rotation=45, ha='right')
+        plt.xticks(rotation=45, ha="right")
         plt.tight_layout()
 
         # Generate filename
@@ -477,7 +511,7 @@ def plot_generator(
         filepath = config.Paths.PLOTS_DIR / filename
 
         # Save and close
-        plt.savefig(filepath, dpi=150, bbox_inches='tight')
+        plt.savefig(filepath, dpi=150, bbox_inches="tight")
         plt.close()  # Prevent memory leak
 
         logger.info("Plot saved to %s", filepath)
@@ -488,4 +522,3 @@ def plot_generator(
         plt.close()  # Ensure cleanup even on error
         logger.error("Plot generation failed: %s", e)
         raise RuntimeError(f"Plot generation failed: {e}") from e
-

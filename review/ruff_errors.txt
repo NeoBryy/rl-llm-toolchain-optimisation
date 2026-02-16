@@ -1,0 +1,254 @@
+﻿W293 Blank line contains whitespace
+  --> src\rl\model_wrapper.py:45:1
+   |
+43 |     """
+44 |     Wrapper for Llama model to facilitate ReAct agent loop.
+45 |     
+   | ^^^^
+46 |     Manages loading the model/tokenizer and provides methods for 
+47 |     controlled generation stopping at Action/Observation boundaries.
+   |
+help: Remove whitespace from blank line
+
+W291 Trailing whitespace
+  --> src\rl\model_wrapper.py:46:65
+   |
+44 |     Wrapper for Llama model to facilitate ReAct agent loop.
+45 |     
+46 |     Manages loading the model/tokenizer and provides methods for 
+   |                                                                 ^
+47 |     controlled generation stopping at Action/Observation boundaries.
+48 |     """
+   |
+help: Remove trailing whitespace
+
+W293 Blank line contains whitespace
+  --> src\rl\model_wrapper.py:53:1
+   |
+51 |         """
+52 |         Initialize model and tokenizer.
+53 |         
+   | ^^^^^^^^
+54 |         Args:
+55 |             model_name: HuggingFace model identifier
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> src\rl\model_wrapper.py:105:1
+    |
+103 |         """
+104 |         Generate tokens until 'Observation:' pattern is detected.
+105 |         
+    | ^^^^^^^^
+106 |         This captures the 'Thought', 'Action', and 'Action Input' blocks.
+107 |         """
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> src\rl\model_wrapper.py:135:1
+    |
+133 |         """
+134 |         Full ReAct loop using the model methods.
+135 |         
+    | ^^^^^^^^
+136 |         Returns:
+137 |             Dict matching BaseReActAgent.run() format, plus 'trajectory'.
+    |
+help: Remove whitespace from blank line
+
+W291 Trailing whitespace
+ --> src\rl\ppo_trainer.py:4:62
+  |
+2 | PPO Training loop implementation.
+3 |
+4 | Manages the training process using TRL's PPOTrainer, handling 
+  |                                                              ^
+5 | rollout collection, reward calculation, and model updates.
+6 | """
+  |
+help: Remove trailing whitespace
+
+W293 Blank line contains whitespace
+  --> src\rl\ppo_trainer.py:68:1
+   |
+66 |         """
+67 |         Run one episode and prepare data for training.
+68 |         
+   | ^^^^^^^^
+69 |         Args:
+70 |             query_data: Dict with 'query', 'expected_value', etc.
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\rl\ppo_trainer.py:71:1
+   |
+69 |         Args:
+70 |             query_data: Dict with 'query', 'expected_value', etc.
+71 |             
+   | ^^^^^^^^^^^^
+72 |         Returns:
+73 |             Tuple of (queries, responses, rewards) tensors, or (None, None, None) if failed
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> src\rl\ppo_trainer.py:98:1
+    |
+ 96 |         """
+ 97 |         Main training loop.
+ 98 |         
+    | ^^^^^^^^
+ 99 |         Args:
+100 |             training_queries: List of ground truth query dicts
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> src\rl\ppo_trainer.py:101:1
+    |
+ 99 |         Args:
+100 |             training_queries: List of ground truth query dicts
+101 |             
+    | ^^^^^^^^^^^^
+102 |         Returns:
+103 |             Dictionary of training metrics
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\rl\reward_function.py:19:1
+   |
+17 |     """
+18 |     Extract the most likely answer value from agent response text.
+19 |     
+   | ^^^^
+20 |     Finds all numbers and returns the last one, as agent answers 
+21 |     typically end with the calculated value.
+   |
+help: Remove whitespace from blank line
+
+W291 Trailing whitespace
+  --> src\rl\reward_function.py:20:65
+   |
+18 |     Extract the most likely answer value from agent response text.
+19 |     
+20 |     Finds all numbers and returns the last one, as agent answers 
+   |                                                                 ^
+21 |     typically end with the calculated value.
+22 |     """
+   |
+help: Remove trailing whitespace
+
+W293 Blank line contains whitespace
+  --> src\rl\reward_function.py:43:1
+   |
+41 |     """
+42 |     Verify if a plot file was actually created on disk.
+43 |     
+   | ^^^^
+44 |     Checks tool call history for successful plot_generator calls
+45 |     and verifies the returned path exists.
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:18:1
+   |
+16 |     """
+17 |     Extract text after marker until next marker or end.
+18 |     
+   | ^^^^
+19 |     Args:
+20 |         text: Full response text
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:22:1
+   |
+20 |         text: Full response text
+21 |         marker: Marker to extract after (e.g., 'Thought:')
+22 |         
+   | ^^^^^^^^
+23 |     Returns:
+24 |         Extracted text, stripped of whitespace
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:46:1
+   |
+44 |     """
+45 |     Attempt to repair common LLM JSON formatting errors.
+46 |     
+   | ^^^^
+47 |     Args:
+48 |         input_str: Raw JSON string from LLM output
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:49:1
+   |
+47 |     Args:
+48 |         input_str: Raw JSON string from LLM output
+49 |         
+   | ^^^^^^^^
+50 |     Returns:
+51 |         Cleaned JSON string
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:63:1
+   |
+61 |     """
+62 |     Parse LLM response for Thought/Action/Answer markers.
+63 |     
+   | ^^^^
+64 |     Args:
+65 |         response: Raw LLM response text
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\parsing.py:66:1
+   |
+64 |     Args:
+65 |         response: Raw LLM response text
+66 |         
+   | ^^^^^^^^
+67 |     Returns:
+68 |         Parsed dict with type, thought, action, action_input, answer, error
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\tensor_utils.py:15:1
+   |
+13 |     """
+14 |     Convert episode trajectory into PPO-compatible tensors.
+15 |     
+   | ^^^^
+16 |     Args:
+17 |         tokenizer: Tokenizer for encoding text
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> src\utils\tensor_utils.py:20:1
+   |
+18 |         episode_result: Result dict from run_episode containing 'trajectory'
+19 |         final_reward: Scalar reward for the episode
+20 |         
+   | ^^^^^^^^
+21 |     Returns:
+22 |         (query_tensors, response_tensors, rewards) for TRL PPOTrainer
+   |
+help: Remove whitespace from blank line
+
+Found 21 errors.
+No fixes available (21 hidden fixes can be enabled with the `--unsafe-fixes` option).

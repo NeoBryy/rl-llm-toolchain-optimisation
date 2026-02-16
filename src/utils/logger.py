@@ -46,7 +46,7 @@ def get_logger(name: str) -> logging.Logger:
     # Log format: 2026-02-11 16:30:45 | INFO | src.data.generator | Message
     formatter = logging.Formatter(
         fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     # Console handler (INFO and above)

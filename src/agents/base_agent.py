@@ -4,7 +4,6 @@ ReAct agent for meter data analysis.
 Implements Reasoning + Acting pattern with OpenAI LLM and tool execution.
 """
 
-import json
 from typing import Any
 
 from openai import OpenAI
@@ -12,6 +11,7 @@ from openai import OpenAI
 from src import config
 from src.agents import tool_registry
 from src.utils.logger import get_logger
+from src.utils.parsing import parse_response
 
 logger = get_logger(__name__)
 
@@ -83,123 +83,14 @@ class BaseReActAgent:
             "total_tokens": response.usage.total_tokens,
         }
 
-        logger.debug("LLM response: %d tokens (%d prompt, %d completion)",
-                     usage["total_tokens"], usage["prompt_tokens"], usage["completion_tokens"])
+        logger.debug(
+            "LLM response: %d tokens (%d prompt, %d completion)",
+            usage["total_tokens"],
+            usage["prompt_tokens"],
+            usage["completion_tokens"],
+        )
 
         return response_text, usage
-
-    def _extract_after_marker(self, text: str, marker: str) -> str:
-        """
-        Extract text after marker until next marker or end.
-
-        Args:
-            text: Full response text
-            marker: Marker to extract after (e.g., 'Thought:')
-
-        Returns:
-            Extracted text, stripped of whitespace
-        """
-        parts = text.split(marker, 1)
-        if len(parts) < 2:
-            return ""
-
-        content = parts[1]
-
-        # Stop at next marker - ORDER MATTERS!
-        # "Action Input:" MUST come before "Action:" to avoid substring match
-        stop_markers = ["Thought:", "Action Input:", "Action:", "Answer:", "Observation:"]
-        for next_marker in stop_markers:
-            if next_marker in content:
-                content = content.split(next_marker)[0]
-                break
-
-        return content.strip()
-
-    def _clean_json_string(self, input_str: str) -> str:
-        """
-        Attempt to repair common LLM JSON formatting errors.
-
-        Args:
-            input_str: Raw JSON string from LLM output
-
-        Returns:
-            Cleaned JSON string
-        """
-        import re
-
-        input_str = input_str.strip()
-        input_str = re.sub(r'[\n\r\t]', ' ', input_str)   # newlines inside JSON
-        input_str = re.sub(r',\s*}', '}', input_str)       # trailing commas
-        input_str = re.sub(r',\s*]', ']', input_str)       # trailing commas in arrays
-        return input_str
-
-    def _parse_response(self, response: str) -> dict[str, Any]:
-        """
-        Parse LLM response for Thought/Action/Answer markers.
-
-        Args:
-            response: Raw LLM response text
-
-        Returns:
-            Parsed dict with type, thought, action, action_input, answer, error
-        """
-        result = {
-            "type": None,
-            "thought": None,
-            "action": None,
-            "action_input": None,
-            "answer": None,
-            "error": None,
-            "raw_response": response,
-        }
-
-        # Check for Answer first (terminal condition)
-        if "Answer:" in response:
-            result["type"] = "answer"
-            result["answer"] = self._extract_after_marker(response, "Answer:")
-            logger.info("Parsed final answer")
-            return result
-
-        # Check for Thought
-        if "Thought:" in response:
-            result["thought"] = self._extract_after_marker(response, "Thought:")
-
-        # Check for Action
-        if "Action:" in response:
-            result["type"] = "action"
-            result["action"] = self._extract_after_marker(response, "Action:")
-
-            # Extract Action Input (should be JSON)
-            if "Action Input:" in response:
-                input_str = self._extract_after_marker(response, "Action Input:")
-                try:
-                    # Clean and repair common JSON errors
-                    input_str = self._clean_json_string(input_str)
-                    result["action_input"] = json.loads(input_str)
-                    logger.info("Parsed action: %s", result["action"])
-                except json.JSONDecodeError as e:
-                    result["type"] = "error"
-                    result["error"] = f"Invalid JSON in Action Input: {e}"
-                    logger.error("JSON parse error: %s | Raw input: %s", result["error"], input_str[:200])
-                    return result
-            else:
-                result["type"] = "error"
-                result["error"] = "Action specified but no Action Input found"
-                logger.error("Missing Action Input")
-                return result
-
-        elif result["thought"]:
-            # Has Thought but no Action - thinking phase
-            result["type"] = "thought_only"
-            logger.debug("Parsed thought-only response")
-
-        else:
-            # No recognizable markers
-            result["type"] = "error"
-            result["error"] = "Could not parse response - missing Thought/Action/Answer markers"
-            logger.error("Unparseable response: %s", response[:100])
-
-        return result
 
     def _execute_tool_call(
         self,
@@ -304,21 +195,36 @@ class BaseReActAgent:
                 response_text, usage = self._call_llm(messages)
             except Exception as e:
                 logger.error("LLM call failed: %s", e)
-                return self._build_result(None, iteration + 1, tool_calls, False,
-                                         f"LLM call failed: {e}",
-                                         total_prompt_tokens, total_completion_tokens, total_tokens)
+                return self._build_result(
+                    None,
+                    iteration + 1,
+                    tool_calls,
+                    False,
+                    f"LLM call failed: {e}",
+                    total_prompt_tokens,
+                    total_completion_tokens,
+                    total_tokens,
+                )
 
             total_prompt_tokens += usage["prompt_tokens"]
             total_completion_tokens += usage["completion_tokens"]
             total_tokens += usage["total_tokens"]
 
             messages.append({"role": "assistant", "content": response_text})
-            parsed = self._parse_response(response_text)
+            parsed = parse_response(response_text)
 
             if parsed["type"] == "answer":
                 logger.info("Task completed in %d iterations", iteration + 1)
-                return self._build_result(parsed["answer"], iteration + 1, tool_calls, True, None,
-                                         total_prompt_tokens, total_completion_tokens, total_tokens)
+                return self._build_result(
+                    parsed["answer"],
+                    iteration + 1,
+                    tool_calls,
+                    True,
+                    None,
+                    total_prompt_tokens,
+                    total_completion_tokens,
+                    total_tokens,
+                )
 
             elif parsed["type"] == "action":
                 observation, tool_call_record = self._execute_tool_call(
@@ -333,11 +239,27 @@ class BaseReActAgent:
 
             elif parsed["type"] == "error":
                 logger.error("Parse error: %s", parsed["error"])
-                return self._build_result(None, iteration + 1, tool_calls, False,
-                                         f"Parse error: {parsed['error']}",
-                                         total_prompt_tokens, total_completion_tokens, total_tokens)
+                return self._build_result(
+                    None,
+                    iteration + 1,
+                    tool_calls,
+                    False,
+                    f"Parse error: {parsed['error']}",
+                    total_prompt_tokens,
+                    total_completion_tokens,
+                    total_tokens,
+                )
 
-        logger.warning("Max iterations (%d) reached without answer", self.max_iterations)
-        return self._build_result(None, self.max_iterations, tool_calls, False,
-                                 f"Max iterations ({self.max_iterations}) reached without answer",
-                                 total_prompt_tokens, total_completion_tokens, total_tokens)
+        logger.warning(
+            "Max iterations (%d) reached without answer", self.max_iterations
+        )
+        return self._build_result(
+            None,
+            self.max_iterations,
+            tool_calls,
+            False,
+            f"Max iterations ({self.max_iterations}) reached without answer",
+            total_prompt_tokens,
+            total_completion_tokens,
+            total_tokens,
+        )

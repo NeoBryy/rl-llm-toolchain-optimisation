@@ -64,6 +64,42 @@ class AgentConfig:
     TEMPERATURE: float = 0.0  # LLM temperature (0.0 = deterministic)
 
 
+class RLConfig:
+    """Reinforcement Learning and PPO training settings."""
+
+    # Model settings
+    MODEL_NAME: str = "meta-llama/Llama-3.2-1B"  # HuggingFace model ID
+    MAX_LENGTH: int = 512  # Max sequence length for context
+    MAX_NEW_TOKENS: int = 256  # Max tokens to generate per response
+
+    # Training hyperparameters
+    LEARNING_RATE: float = 1e-5  # Conservative to prevent forgetting
+    BATCH_SIZE: int = 4  # Queries per batch
+    MINI_BATCH_SIZE: int = 2  # PPO minibatch size
+    GRADIENT_ACCUMULATION_STEPS: int = 2  # Effective batch = 8
+
+    # PPO-specific parameters
+    PPO_EPOCHS: int = 4  # Optimization epochs per batch
+    LAM: float = 0.95  # GAE lambda
+    CLIPRANGE: float = 0.2  # PPO clip range
+    CLIPRANGE_VALUE: float = 0.2  # Value function clip range
+    VF_COEF: float = 0.1  # Value function coefficient
+
+    # Reward function parameters
+    NUMERICAL_TOLERANCE: float = 0.05  # 5% tolerance for numerical accuracy
+
+    # KL divergence control (prevents drift from reference model)
+    KL_PENALTY: str = "kl"  # KL penalty type
+    TARGET_KL: float = 0.01  # Early stopping threshold
+    INIT_KL_COEF: float = 0.2  # Initial KL coefficient
+
+    # Training control
+    NUM_TRAIN_EPOCHS: int = 3  # Full dataset passes
+    MAX_GRAD_NORM: float = 0.5  # Gradient clipping
+    SAVE_FREQ: int = 10  # Save checkpoint every N batches
+    LOG_FREQ: int = 1  # Log every batch
+
+
 class DataConfig:
     """Synthetic meter data generation parameters."""
 
@@ -91,15 +127,15 @@ class Paths:
     PROMPTS_DIR: Path = PROJECT_ROOT / "src" / "prompts"
     LOGS_DIR: Path = PROJECT_ROOT / "logs"
     PLOTS_DIR: Path = PROJECT_ROOT / "plots"
+    MODELS_DIR: Path = PROJECT_ROOT / "models"
 
     # Specific files
     DB_PATH: Path = DATA_DIR / "meter_data.db"
     BASELINE_PROMPT_PATH: Path = PROMPTS_DIR / "baseline.txt"
-    RL_PROMPT_PATH: Path = PROMPTS_DIR / "rl.txt"
+    RL_PROMPT_PATH: Path = PROMPTS_DIR / "llama_react.txt"
 
 
 # === To be added in later milestones ===
-# class RLConfig: (PPO hyperparameters, reward weights, checkpoint paths)
 # class EvalConfig: (metrics, thresholds, test set size, comparison settings)
 
 
@@ -121,7 +157,7 @@ def validate_config() -> None:
         )
 
     # Create directories if missing
-    for path in [Paths.DATA_DIR, Paths.PROMPTS_DIR, Paths.LOGS_DIR, Paths.PLOTS_DIR]:
+    for path in [Paths.DATA_DIR, Paths.PROMPTS_DIR, Paths.LOGS_DIR, Paths.PLOTS_DIR, Paths.MODELS_DIR]:
         path.mkdir(parents=True, exist_ok=True)
 
 

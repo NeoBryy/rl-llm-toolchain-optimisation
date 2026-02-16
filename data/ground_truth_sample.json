@@ -1,0 +1,62 @@
+[
+  {
+    "query": "What is the average consumption for residential customers?",
+    "category": "aggregation",
+    "expected_value": 0.60787,
+    "tolerance": 0.05
+  },
+  {
+    "query": "What is the total consumption for commercial customers?",
+    "category": "aggregation",
+    "expected_value": 187.14900000000003,
+    "tolerance": 0.05
+  },
+  {
+    "query": "Calculate the electricity bill for customer 3 in January 2026",
+    "category": "billing",
+    "expected_value": 647.54,
+    "tolerance": 0.05
+  },
+  {
+    "query": "Calculate the electricity bill for customer 5 in February 2026",
+    "category": "billing",
+    "expected_value": 231.7,
+    "tolerance": 0.05
+  },
+  {
+    "query": "What is the load factor for customer 5 between 2026-01-01 and 2026-01-15?",
+    "category": "load_factor",
+    "expected_value": 0.411,
+    "tolerance": 0.05
+  },
+  {
+    "query": "What is the load factor for customer 10 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.328,
+    "tolerance": 0.05
+  },
+  {
+    "query": "What is the maximum consumption recorded for any customer?",
+    "category": "aggregation",
+    "expected_value": 3.709,
+    "tolerance": 0.05
+  },
+  {
+    "query": "How many customers are in the database?",
+    "category": "count",
+    "expected_value": 100.0,
+    "tolerance": 0.05
+  },
+  {
+    "query": "Calculate the electricity bill for customer 1 in January 2026",
+    "category": "billing",
+    "expected_value": 646.45,
+    "tolerance": 0.05
+  },
+  {
+    "query": "What is the average consumption for customer 7 in January?",
+    "category": "aggregation",
+    "expected_value": 1.8588200000000001,
+    "tolerance": 0.05
+  }
+]

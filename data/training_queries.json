@@ -1,0 +1,387 @@
+[
+  {
+    "query": "What is the average consumption for residential customers?",
+    "category": "aggregation",
+    "expected_value": 0.613,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the total consumption for commercial customers?",
+    "category": "aggregation",
+    "expected_value": 187.149,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the maximum consumption recorded for any customer?",
+    "category": "aggregation",
+    "expected_value": 3.709,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the minimum consumption recorded?",
+    "category": "aggregation",
+    "expected_value": 0.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "What is the average consumption for customer 7 in January?",
+    "category": "aggregation",
+    "expected_value": 1.8588,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the total consumption for customer 15?",
+    "category": "aggregation",
+    "expected_value": 59.586,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the average consumption for all customers in January?",
+    "category": "aggregation",
+    "expected_value": 1.8032,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the total consumption for customer 25 in February?",
+    "category": "aggregation",
+    "expected_value": 100.733,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the maximum consumption for residential customers?",
+    "category": "aggregation",
+    "expected_value": 1.529,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the average consumption for commercial customers in January?",
+    "category": "aggregation",
+    "expected_value": 1.8032,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the total consumption for customer 50?",
+    "category": "aggregation",
+    "expected_value": 60.755,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the minimum consumption for commercial customers?",
+    "category": "aggregation",
+    "expected_value": 0.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "What is the average consumption for customer 33 in February?",
+    "category": "aggregation",
+    "expected_value": 0.6272,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the total consumption in January 2026?",
+    "category": "aggregation",
+    "expected_value": 180.317,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the average consumption for customer 99?",
+    "category": "aggregation",
+    "expected_value": 0.6256,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 1 in January 2026",
+    "category": "billing",
+    "expected_value": 646.45,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 3 in January 2026",
+    "category": "billing",
+    "expected_value": 647.54,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 5 in February 2026",
+    "category": "billing",
+    "expected_value": 231.7,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 10 in January 2026",
+    "category": "billing",
+    "expected_value": 322.23,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 15 in February 2026",
+    "category": "billing",
+    "expected_value": 230.06,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 20 in January 2026",
+    "category": "billing",
+    "expected_value": 319.68,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 25 in February 2026",
+    "category": "billing",
+    "expected_value": 497.72,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 7 in January 2026",
+    "category": "billing",
+    "expected_value": 649.9,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 12 in February 2026",
+    "category": "billing",
+    "expected_value": 499.72,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 30 in January 2026",
+    "category": "billing",
+    "expected_value": 319.03,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 40 in February 2026",
+    "category": "billing",
+    "expected_value": 231.21,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 50 in January 2026",
+    "category": "billing",
+    "expected_value": 319.72,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 60 in February 2026",
+    "category": "billing",
+    "expected_value": 228.95,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 75 in January 2026",
+    "category": "billing",
+    "expected_value": 319.71,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "Calculate the electricity bill for customer 90 in February 2026",
+    "category": "billing",
+    "expected_value": 229.13,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 5 between 2026-01-01 and 2026-01-15?",
+    "category": "load_factor",
+    "expected_value": 0.411,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 10 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.328,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 15 in February 2026?",
+    "category": "load_factor",
+    "expected_value": 0.333,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 20 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.349,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 25 between 2026-02-01 and 2026-02-15?",
+    "category": "load_factor",
+    "expected_value": 0.354,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 1 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.324,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 7 in February 2026?",
+    "category": "load_factor",
+    "expected_value": 0.366,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 30 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.342,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 35 in February 2026?",
+    "category": "load_factor",
+    "expected_value": 0.308,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 40 between 2026-01-01 and 2026-01-15?",
+    "category": "load_factor",
+    "expected_value": 0.413,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 50 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.34,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 60 in February 2026?",
+    "category": "load_factor",
+    "expected_value": 0.333,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 70 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.329,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 80 in February 2026?",
+    "category": "load_factor",
+    "expected_value": 0.356,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "What is the load factor for customer 95 in January 2026?",
+    "category": "load_factor",
+    "expected_value": 0.327,
+    "tolerance": 0.05,
+    "tolerance_type": "relative"
+  },
+  {
+    "query": "How many customers are in the database?",
+    "category": "count",
+    "expected_value": 100.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "How many residential customers are there?",
+    "category": "count",
+    "expected_value": 73.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "How many commercial customers are there?",
+    "category": "count",
+    "expected_value": 27.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "How many readings are in the database?",
+    "category": "count",
+    "expected_value": 288000.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "How many readings are there for customer 5?",
+    "category": "count",
+    "expected_value": 2880.0,
+    "tolerance": 0.0,
+    "tolerance_type": "exact"
+  },
+  {
+    "query": "Plot the daily consumption for customer 5 in January 2026",
+    "category": "plot",
+    "expected_value": true,
+    "tolerance": 0.0,
+    "tolerance_type": "plot_exists"
+  },
+  {
+    "query": "Generate a bar chart of total consumption by customer segment",
+    "category": "plot",
+    "expected_value": true,
+    "tolerance": 0.0,
+    "tolerance_type": "plot_exists"
+  },
+  {
+    "query": "Visualize the consumption trend for customer 10 in February 2026",
+    "category": "plot",
+    "expected_value": true,
+    "tolerance": 0.0,
+    "tolerance_type": "plot_exists"
+  },
+  {
+    "query": "Create a scatter plot of peak vs off-peak usage for all customers",
+    "category": "plot",
+    "expected_value": true,
+    "tolerance": 0.0,
+    "tolerance_type": "plot_exists"
+  },
+  {
+    "query": "Show a bar chart of average consumption by meter type",
+    "category": "plot",
+    "expected_value": true,
+    "tolerance": 0.0,
+    "tolerance_type": "plot_exists"
+  }
+]
