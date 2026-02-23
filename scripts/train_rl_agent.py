@@ -25,6 +25,9 @@ def main():
         
     with open(data_path) as f:
         queries = json.load(f)
+
+    # Smoke test: limit to 5 queries
+    queries = queries[:1]
         
     logger.info("Loaded %d training queries from %s", len(queries), data_path)
     

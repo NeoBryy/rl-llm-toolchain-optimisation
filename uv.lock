@@ -491,6 +491,15 @@ wheels = [
 ]
 
 [[package]]
+name = "docstring-parser"
+version = "0.17.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b2/9d/c3b43da9515bd270df0f80548d9944e389870713cc1fe2b8fb35fe2bcefd/docstring_parser-0.17.0.tar.gz", hash = "sha256:583de4a309722b3315439bb31d64ba3eebada841f2e2cee23b99df001434c912", size = 27442, upload-time = "2025-07-21T07:35:01.868Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/55/e2/2537ebcff11c1ee1ff17d8d0b6f4db75873e3b0fb32c2d4a2ee31ecb310a/docstring_parser-0.17.0-py3-none-any.whl", hash = "sha256:cf2569abd23dce8099b300f9b4fa8191e9582dda731fd533daf54c4551658708", size = 36896, upload-time = "2025-07-21T07:35:00.684Z" },
+]
+
+[[package]]
 name = "duckdb"
 version = "1.4.4"
 source = { registry = "https://pypi.org/simple" }
@@ -2514,10 +2523,10 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "streamlit", specifier = ">=1.28.0" },
-    { name = "torch", specifier = ">=2.0.0" },
+    { name = "torch", specifier = ">=2.10.0" },
     { name = "tqdm", specifier = ">=4.65.0" },
     { name = "transformers", specifier = ">=4.30.0" },
-    { name = "trl", specifier = ">=0.7.0" },
+    { name = "trl", specifier = ">=0.7.0,<0.9.0" },
 ]
 provides-extras = ["dev"]
 
@@ -2932,17 +2941,31 @@ wheels = [
 
 [[package]]
 name = "trl"
-version = "0.28.0"
+version = "0.8.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "accelerate" },
     { name = "datasets" },
-    { name = "packaging" },
+    { name = "numpy" },
+    { name = "torch" },
     { name = "transformers" },
+    { name = "tyro" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/86/98/c99f4e83dc6b4cd95cba7bf3bb48d3e88624ed9aa5b47a6866ee5ea337ec/trl-0.28.0.tar.gz", hash = "sha256:1b1269ac0ebb87465fc47c35664aed4e8e7ef67909098c7c0f801806ab89dd62", size = 455787, upload-time = "2026-02-10T13:21:17.243Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/1e/8eb5825be3cc6b767420bd4bfb1d8be6d857592029459b23e16f2515150d/trl-0.8.6.tar.gz", hash = "sha256:3785683f5b3e20d4b28481070dbdf736def42bcd6d3323e8a92f458925683da3", size = 194560, upload-time = "2024-04-22T08:57:25.831Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/67/6b93c90d40342ae32df93724bb6f1584e963701c2bafe5fe90007afb51c3/trl-0.28.0-py3-none-any.whl", hash = "sha256:f01c6b4bbabe4db8c60ef8a7b0b7fe7f94859dd1c1cbe210daaa07fd4c26ddc9", size = 540524, upload-time = "2026-02-10T13:21:15.852Z" },
+    { url = "https://files.pythonhosted.org/packages/97/7e/274ed94ab7da21db4b7cbccad2bf2ed0940082a929b1512e508351b289f5/trl-0.8.6-py3-none-any.whl", hash = "sha256:0c9ee3faa7a6ddc158debaea0f725edb3143b4cc43babc5b5a05374de3e6352c", size = 245236, upload-time = "2024-04-22T08:57:23.331Z" },
+]
+
+[[package]]
+name = "typeguard"
+version = "4.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7e/ec/adfe3dd6b5f7c5fc0b3cecdf6f893f1756dbd23cf749cd1ae49db069414f/typeguard-4.5.0.tar.gz", hash = "sha256:749bea21cdb2553e12831bc29f1eae980b22c7de8331ab67ae7db9e85470b5a7", size = 79993, upload-time = "2026-02-15T00:24:25.244Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d4/35/7541d1f046491fac8ce05d543d3f0de0af02086ad864dd3a23535ec703b9/typeguard-4.5.0-py3-none-any.whl", hash = "sha256:cfda388fc88a9ce42a41890900d6f31ee124bea9b73bb84701a32438e92165c3", size = 36724, upload-time = "2026-02-15T00:24:23.581Z" },
 ]
 
 [[package]]
@@ -2991,6 +3014,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/55/e3/70399cb7dd41c10ac53367ae42139cf4b1ca5f36bb3dc6c9d33acdb43655/typing_inspection-0.4.2.tar.gz", hash = "sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464", size = 75949, upload-time = "2025-10-01T02:14:41.687Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl", hash = "sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7", size = 14611, upload-time = "2025-10-01T02:14:40.154Z" },
+]
+
+[[package]]
+name = "tyro"
+version = "1.0.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docstring-parser" },
+    { name = "typeguard" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a3/2d/c733d7a9459bf5bfe505182dae172d736c6e168225d84dabd341345cedbc/tyro-1.0.6.tar.gz", hash = "sha256:691976f70703ef0153cb6107c4ac418d558d0dd774137dd9b6420b9cf4dd8aee", size = 454440, upload-time = "2026-02-05T12:23:01.538Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a7/f9/56b0cb8c5c287c7eec02735cce74a4c25cc56d6817bab7edde6f32b024a3/tyro-1.0.6-py3-none-any.whl", hash = "sha256:43a6c63419e8c14c3c21981b2614a583b5d14d0bb1300d7c7f328bec0f46cd37", size = 181300, upload-time = "2026-02-05T12:22:59.833Z" },
 ]
 
 [[package]]

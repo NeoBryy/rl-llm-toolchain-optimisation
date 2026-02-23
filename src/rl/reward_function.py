@@ -12,6 +12,9 @@ from pathlib import Path
 from typing import Any
 
 from src import config
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def _extract_number(text: str) -> float | None:
@@ -142,4 +145,17 @@ def calculate_reward(query_data: dict[str, Any], result: dict[str, Any]) -> floa
                 elif abs(agent_val - expected_val) <= (tolerance * abs(expected_val)):
                     reward += 5.0
 
-    return reward
+    # Penalize hallucinations after Answer:
+    if result.get("trajectory"):
+        last_generation = result["trajectory"][-1][1]
+        if "Answer:" in last_generation:
+            answer_idx = last_generation.index("Answer:")
+            after_answer = last_generation[answer_idx + len("Answer:"):]
+            hallucination_triggers = ["\nQuestion:", "\nThought:", "How much", "What is"]
+            for trigger in hallucination_triggers:
+                if trigger in after_answer:
+                    reward -= 2.0
+                    logger.info("Penalty: Hallucination detected after Answer")
+                    break
+
+    return max(-8.0, min(10.0, reward))

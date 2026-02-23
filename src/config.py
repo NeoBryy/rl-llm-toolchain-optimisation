@@ -68,18 +68,18 @@ class RLConfig:
     """Reinforcement Learning and PPO training settings."""
 
     # Model settings
-    MODEL_NAME: str = "meta-llama/Llama-3.2-1B"  # HuggingFace model ID
+    MODEL_NAME: str = "Qwen/Qwen2.5-1.5B-Instruct"  # Open model for testing (Llama pending)
     MAX_LENGTH: int = 512  # Max sequence length for context
     MAX_NEW_TOKENS: int = 256  # Max tokens to generate per response
 
     # Training hyperparameters
-    LEARNING_RATE: float = 1e-5  # Conservative to prevent forgetting
-    BATCH_SIZE: int = 4  # Queries per batch
-    MINI_BATCH_SIZE: int = 2  # PPO minibatch size
-    GRADIENT_ACCUMULATION_STEPS: int = 2  # Effective batch = 8
+    LEARNING_RATE: float = 5e-6  # Conservative to prevent forgetting
+    BATCH_SIZE: int = 1  # Queries per batch
+    MINI_BATCH_SIZE: int = 1  # PPO minibatch size
+    GRADIENT_ACCUMULATION_STEPS: int = 1  # Effective batch = 8
 
     # PPO-specific parameters
-    PPO_EPOCHS: int = 4  # Optimization epochs per batch
+    PPO_EPOCHS: int = 2  # Optimization epochs per batch
     LAM: float = 0.95  # GAE lambda
     CLIPRANGE: float = 0.2  # PPO clip range
     CLIPRANGE_VALUE: float = 0.2  # Value function clip range
@@ -91,7 +91,7 @@ class RLConfig:
     # KL divergence control (prevents drift from reference model)
     KL_PENALTY: str = "kl"  # KL penalty type
     TARGET_KL: float = 0.01  # Early stopping threshold
-    INIT_KL_COEF: float = 0.2  # Initial KL coefficient
+    INIT_KL_COEF: float = 0.5  # Initial KL coefficient
 
     # Training control
     NUM_TRAIN_EPOCHS: int = 3  # Full dataset passes
@@ -163,3 +163,9 @@ def validate_config() -> None:
 
 # Validate configuration on module import
 validate_config()
+
+# Authenticate with Hugging Face if token is present
+hf_token = os.getenv("HUGGING_FACE_ACCESS_TOKEN") or os.getenv("HF_TOKEN")
+if hf_token:
+    from huggingface_hub import login
+    login(token=hf_token)

@@ -15,6 +15,7 @@ from transformers import (
     StoppingCriteria,
     StoppingCriteriaList,
 )
+from trl import AutoModelForCausalLMWithValueHead
 
 from src import config
 from src.agents.tool_registry import execute_tool, get_tools_description
@@ -64,10 +65,10 @@ class ReActLlamaModel:
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-        self.model = AutoModelForCausalLM.from_pretrained(
+        self.model = AutoModelForCausalLMWithValueHead.from_pretrained(
             model_name,
             torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
-            device_map="auto",
+            device_map={"": self.device},  # Force all on single device, no offloading
         )
 
         if config.Paths.RL_PROMPT_PATH.exists():
@@ -91,7 +92,7 @@ class ReActLlamaModel:
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=config.RLConfig.MAX_NEW_TOKENS,
+                max_new_tokens=150,
                 stopping_criteria=stopping_criteria,
                 pad_token_id=self.tokenizer.pad_token_id,
                 do_sample=False,
@@ -108,7 +109,9 @@ class ReActLlamaModel:
 
         This captures the 'Thought', 'Action', and 'Action Input' blocks.
         """
-        return self._generate(prompt, ["Observation:", "\nObservation"])
+        return self._generate(
+            prompt, ["Observation:", "\nObservation"]
+        )
 
     def _build_fail_result(
         self,
@@ -160,6 +163,16 @@ class ReActLlamaModel:
 
             # Generate next step (Thought/Action)
             new_text = self.generate_until_action(prompt)
+            logger.info(f"Model output after tool: {repr(new_text[:200])}")
+
+            # Truncate hallucinations after Answer:
+            if "Answer:" in new_text:
+                answer_start = new_text.index("Answer:")
+                remainder = new_text[answer_start + len("Answer:"):]
+                double_newline = remainder.find("\n\n")
+                if double_newline != -1:
+                    new_text = new_text[:answer_start + len("Answer:") + double_newline]
+                    logger.warning("Truncated hallucination after Answer:")
 
             # Store trajectory step
             trajectory.append((current_context, new_text))

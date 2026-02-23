@@ -48,3 +48,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Models
+models/

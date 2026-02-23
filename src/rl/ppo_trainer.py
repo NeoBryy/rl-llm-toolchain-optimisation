@@ -38,18 +38,13 @@ class RLTrainer:
 
         # TRL PPO Configuration
         self.ppo_config = PPOConfig(
-            model_name=config.RLConfig.MODEL_NAME,
             learning_rate=config.RLConfig.LEARNING_RATE,
             batch_size=config.RLConfig.BATCH_SIZE,
             mini_batch_size=config.RLConfig.MINI_BATCH_SIZE,
             gradient_accumulation_steps=config.RLConfig.GRADIENT_ACCUMULATION_STEPS,
-            optimize_cuda_cache=True,
-            early_stopping=False,
-            target_kl=config.RLConfig.TARGET_KL,
             ppo_epochs=config.RLConfig.PPO_EPOCHS,
-            seed=config.DataConfig.RANDOM_SEED,
             init_kl_coef=config.RLConfig.INIT_KL_COEF,
-            adap_kl_ctrl=True,
+            seed=config.DataConfig.RANDOM_SEED,
         )
 
         # Initialize TRL Trainer
@@ -82,10 +77,10 @@ class RLTrainer:
         # Calculate Reward
         reward = calculate_reward(query_data, result)
 
-        # Validate trajectory exists
-        if not result.get("trajectory"):
-            return None, None, None
-
+        if result["success"] is False and not result.get("trajectory"):
+             logger.warning("Episode failed with no trajectory: %s", query_text[:50])
+             return None, None, None, 0.0, False
+        
         # Convert to TRL tensors
         queries, responses, rewards = convert_to_ppo_tensors(
             self.tokenizer, result, reward
@@ -118,60 +113,60 @@ class RLTrainer:
             # Shuffle queries for each epoch
             random.shuffle(training_queries)
 
-            # Batch processing
-            for i in tqdm(range(0, len(training_queries), batch_size)):
-                batch_queries = training_queries[i : i + batch_size]
+            # Buffers for dynamic batching
+            buffer_q = []
+            buffer_r = []
+            buffer_rewards = []
+            
+            # Collection Phase (Rollout)
+            for query_data in tqdm(training_queries):
+                qs, rs, rws, reward_val, success = self.collect_rollout(query_data)
 
-                batch_q_tensors = []
-                batch_r_tensors = []
-                batch_rewards = []
+                if qs is not None:
+                    buffer_q.extend(qs)
+                    buffer_r.extend(rs)
+                    buffer_rewards.extend(rws)
 
-                batch_stats = {"reward": [], "success": []}
+                    total_episodes += 1
+                    total_reward += reward_val
+                    total_success += 1 if success else 0
 
-                # Collection Phase (Rollout)
-                for query_data in batch_queries:
-                    qs, rs, rws, reward_val, success = self.collect_rollout(query_data)
+                # Optimization Phase (PPO Step) - Process while buffer has enough data
+                while len(buffer_q) >= self.ppo_config.batch_size:
+                    # Slice exact batch size
+                    batch_q = buffer_q[:self.ppo_config.batch_size]
+                    batch_r = buffer_r[:self.ppo_config.batch_size]
+                    batch_rw = buffer_rewards[:self.ppo_config.batch_size]
 
-                    if qs is not None:
-                        batch_q_tensors.extend(qs)
-                        batch_r_tensors.extend(rs)
-                        batch_rewards.extend(rws)
+                    # Remove processed items from buffer
+                    buffer_q = buffer_q[self.ppo_config.batch_size:]
+                    buffer_r = buffer_r[self.ppo_config.batch_size:]
+                    buffer_rewards = buffer_rewards[self.ppo_config.batch_size:]
 
-                        batch_stats["reward"].append(reward_val)
-                        batch_stats["success"].append(1 if success else 0)
-
-                        total_episodes += 1
-                        total_reward += reward_val
-                        total_success += 1 if success else 0
-
-                # Optimization Phase (PPO Step)
-                if batch_q_tensors:
+                    logger.info("Calling ppo_trainer.step()")
                     train_stats = self.ppo_trainer.step(
-                        batch_q_tensors, batch_r_tensors, batch_rewards
+                        batch_q, batch_r, batch_rw
                     )
+                    logger.info("ppo_trainer.step() finished")
 
                     batch_counter += 1
 
                     # Log metrics
                     if batch_counter % config.RLConfig.LOG_FREQ == 0:
-                        avg_reward = (
-                            sum(batch_stats["reward"]) / len(batch_stats["reward"])
-                            if batch_stats["reward"]
-                            else 0
-                        )
-                        success_rate = (
-                            sum(batch_stats["success"]) / len(batch_stats["success"])
-                            if batch_stats["success"]
-                            else 0
-                        )
+                        avg_reward = total_reward / total_episodes if total_episodes > 0 else 0.0
+                        success_rate = total_success / total_episodes if total_episodes > 0 else 0.0
 
                         logger.info(
                             "Step %d: Avg Reward=%.2f, KL=%.4f, Success Rate=%.2f",
-                            total_episodes,
+                            batch_counter,
                             avg_reward,
                             train_stats["objective/kl"],
                             success_rate,
                         )
+            
+            # Drop remaining items at end of epoch (TRL requires strict batch size)
+            if buffer_q:
+                logger.info("Dropping %d remaining items at end of epoch", len(buffer_q))
 
         metrics = {
             "total_episodes": total_episodes,
