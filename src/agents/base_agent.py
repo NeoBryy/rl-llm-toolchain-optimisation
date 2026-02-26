@@ -141,22 +141,10 @@ class BaseReActAgent:
         prompt_tokens: int,
         completion_tokens: int,
         total_tokens: int,
+        trajectory: list[tuple[str, str]] | None = None,
     ) -> dict[str, Any]:
         """
         Build standardized result dict.
-
-        Args:
-            answer: Final answer text or None
-            iterations: Number of iterations completed
-            tool_calls: List of tool call records
-            success: Whether task completed successfully
-            error: Error message or None
-            prompt_tokens: Total prompt tokens used
-            completion_tokens: Total completion tokens used
-            total_tokens: Total tokens used
-
-        Returns:
-            Standardized result dictionary
         """
         return {
             "answer": answer,
@@ -167,17 +155,12 @@ class BaseReActAgent:
             "prompt_tokens": prompt_tokens,
             "completion_tokens": completion_tokens,
             "total_tokens": total_tokens,
+            "trajectory": trajectory or [],
         }
 
     def run(self, query: str) -> dict[str, Any]:
         """
         Run ReAct loop to answer user query.
-
-        Args:
-            query: User's question about meter data
-
-        Returns:
-            Dict with answer, iterations, tool_calls, success, error, and token counts
         """
         logger.info("Starting ReAct loop for query: %s", query)
 
@@ -187,6 +170,10 @@ class BaseReActAgent:
         ]
         tool_calls = []
         total_prompt_tokens = total_completion_tokens = total_tokens = 0
+        trajectory = []  # List of (context_str, response_str)
+        
+        # Initial context is just the query (already in messages)
+        current_context = f"{self.system_prompt}\n\nQuestion: {query}\n"
 
         for iteration in range(self.max_iterations):
             logger.info("Iteration %d/%d", iteration + 1, self.max_iterations)
@@ -204,11 +191,15 @@ class BaseReActAgent:
                     total_prompt_tokens,
                     total_completion_tokens,
                     total_tokens,
+                    trajectory,
                 )
 
             total_prompt_tokens += usage["prompt_tokens"]
             total_completion_tokens += usage["completion_tokens"]
             total_tokens += usage["total_tokens"]
+
+            # Store turn in trajectory
+            trajectory.append((current_context, response_text))
 
             messages.append({"role": "assistant", "content": response_text})
             parsed = parse_response(response_text)
@@ -224,6 +215,7 @@ class BaseReActAgent:
                     total_prompt_tokens,
                     total_completion_tokens,
                     total_tokens,
+                    trajectory,
                 )
 
             elif parsed["type"] == "action":
@@ -232,9 +224,13 @@ class BaseReActAgent:
                 )
                 tool_calls.append(tool_call_record)
                 messages.append({"role": "user", "content": observation})
+                
+                # Update context for next iteration: append current response and observation
+                current_context += response_text + observation
 
             elif parsed["type"] == "thought_only":
                 logger.debug("Thought-only response, continuing")
+                current_context += response_text
                 continue
 
             elif parsed["type"] == "error":
@@ -248,6 +244,7 @@ class BaseReActAgent:
                     total_prompt_tokens,
                     total_completion_tokens,
                     total_tokens,
+                    trajectory,
                 )
 
         logger.warning(
@@ -262,4 +259,5 @@ class BaseReActAgent:
             total_prompt_tokens,
             total_completion_tokens,
             total_tokens,
+            trajectory,
         )

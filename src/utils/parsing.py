@@ -52,6 +52,21 @@ def clean_json_string(input_str: str) -> str:
         Cleaned JSON string
     """
     input_str = input_str.strip()
+    
+    # Strip markdown code blocks if present
+    if input_str.startswith("```"):
+        # Remove starting lines like ```json or ```
+        input_str = re.sub(r"^```[a-z]*\n?", "", input_str)
+        # Remove ending ```
+        input_str = re.sub(r"```$", "", input_str).strip()
+
+    # If there is extra text around the JSON, try to extract only the JSON part
+    # Look for the first '{' and last '}'
+    start_idx = input_str.find("{")
+    end_idx = input_str.rfind("}")
+    if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+        input_str = input_str[start_idx : end_idx + 1]
+
     input_str = re.sub(r"[\n\r\t]", " ", input_str)  # newlines inside JSON
     input_str = re.sub(r",\s*}", "}", input_str)  # trailing commas
     input_str = re.sub(r",\s*]", "]", input_str)  # trailing commas in arrays
@@ -78,18 +93,7 @@ def parse_response(response: str) -> dict[str, Any]:
         "raw_response": response,
     }
 
-    # Check for Answer first (terminal condition)
-    if "Answer:" in response:
-        result["type"] = "answer"
-        result["answer"] = extract_after_marker(response, "Answer:")
-        logger.debug("Parsed final answer")
-        return result
-
-    # Check for Thought
-    if "Thought:" in response:
-        result["thought"] = extract_after_marker(response, "Thought:")
-
-    # Check for Action
+    # Check for Action first (prioritized over Answer if both exist in one turn)
     if "Action:" in response:
         result["type"] = "action"
         result["action"] = extract_after_marker(response, "Action:")
@@ -102,6 +106,8 @@ def parse_response(response: str) -> dict[str, Any]:
                 input_str = clean_json_string(input_str)
                 result["action_input"] = json.loads(input_str)
                 logger.debug("Parsed action: %s", result["action"])
+                # Even if Answer is present, we prioritize Action to ensure tool execution
+                return result
             except json.JSONDecodeError as e:
                 result["type"] = "error"
                 result["error"] = f"Invalid JSON in Action Input: {e}"
@@ -117,11 +123,21 @@ def parse_response(response: str) -> dict[str, Any]:
             logger.error("Missing Action Input")
             return result
 
-    elif result["thought"]:
-        # Has Thought but no Action - thinking phase
+    # Check for Answer second (terminal condition)
+    if "Answer:" in response:
+        result["type"] = "answer"
+        result["answer"] = extract_after_marker(response, "Answer:")
+        logger.debug("Parsed final answer")
+        return result
+
+    # Check for Thought
+    if "Thought:" in response:
+        result["thought"] = extract_after_marker(response, "Thought:")
+
+    if result["thought"]:
+        # Has Thought but no Action/Answer - thinking phase
         result["type"] = "thought_only"
         logger.debug("Parsed thought-only response")
-
     else:
         # No recognizable markers
         result["type"] = "error"
